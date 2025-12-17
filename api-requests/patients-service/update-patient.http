@@ -5,7 +5,7 @@ Content-Type: application/json
 
 {
   "name": "Jan Kowalski",
-  "email": "test@example.pl",
+  "email": "jan.kowalski@example.pl",
   "address": "ul. Główna 123, 00-001 Warszawa",
   "dateOfBirth": "1995-09-09"
 }
