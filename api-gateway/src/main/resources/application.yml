@@ -19,7 +19,6 @@ spring:
         ## PATIENT SERVICE (SPRING BOOT APP) -> /patients -> patients array
 
         # Route for /api/patients/** to patient-service
-
         - id: patient-service-route
           uri: http://patient-service:4000
           predicates:
