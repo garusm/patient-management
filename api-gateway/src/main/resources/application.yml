@@ -1,13 +1,14 @@
 server:
   port: 4004 # Gateway listens on port 4004
 
-logging:
-  level:
-    org.springframework.cloud.gateway: TRACE
-    org.springframework.cloud.gateway.route.RouteDefinitionLocator: TRACE
-    org.springframework.http.server.reactive: DEBUG
-    org.springframework.web.reactive: DEBUG
-    reactor.netty: DEBUG
+## DEBUG mode
+#logging:
+#  level:
+#    org.springframework.cloud.gateway: TRACE
+#    org.springframework.cloud.gateway.route.RouteDefinitionLocator: TRACE
+#    org.springframework.http.server.reactive: DEBUG
+#    org.springframework.web.reactive: DEBUG
+#    reactor.netty: DEBUG
 
 spring:
   cloud:
