@@ -12,7 +12,7 @@ Kompleksowy system zarządzania pacjentami oparty na architekturze mikroserwisow
 ### 🚀 Stack Technologiczny
 
 *   **Język:** Java 21
-*   **Framework:** Spring Boot 3.4+ / 4.0.1
+*   **Framework:** Spring Boot 3.4+
 *   **API Gateway:** Spring Cloud Gateway
 *   **Bezpieczeństwo:** Spring Security, JWT (JSON Web Token)
 *   **Komunikacja Między Serwisami:**
@@ -81,7 +81,7 @@ A comprehensive patient management system based on microservices architecture, u
 ### 🚀 Tech Stack
 
 *   **Language:** Java 21
-*   **Framework:** Spring Boot 3.4+ / 4.0.1
+*   **Framework:** Spring Boot 3.4+
 *   **API Gateway:** Spring Cloud Gateway
 *   **Security:** Spring Security, JWT (JSON Web Token)
 *   **Inter-service Communication:**
