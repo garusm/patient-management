@@ -1,86 +1,210 @@
-# Compiled class files
-*.class
+# ================================================
+# PATIENT MANAGEMENT SYSTEM - ROOT .gitignore
+# ================================================
 
-# Log files
-*.log
-logs/
-*.out
-
-# Eclipse & IntelliJ IDEA
-/.idea/
-/*.iml
-/.classpath
-/.project
-/.settings/
-/target/
-/bin/
-/out/
+# ================================================
+# BACKEND (Java/Spring Boot/Maven)
+# ================================================
 
 # Maven
-/.mvn/
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
+pm-backend/**/target/
+pm-backend/**/.mvn/
+pm-backend/**/mvnw
+pm-backend/**/mvnw.cmd
 
-# Gradle
-.gradle/
-build/
-!gradle-wrapper.jar
-.gradle-cache/
-/gradle/wrapper/gradle-wrapper.properties
+# Compiled class files
+pm-backend/**/*.class
 
-# Node modules (if using Node.js with Java)
-node_modules/
+# Log files
+pm-backend/**/*.log
+pm-backend/**/logs/
 
-# VS Code
-.vscode/
+# Package files
+pm-backend/**/*.jar
+pm-backend/**/*.war
+pm-backend/**/*.nar
+pm-backend/**/*.ear
+pm-backend/**/*.zip
+pm-backend/**/*.tar.gz
+pm-backend/**/*.rar
 
-# OS-generated files
-.DS_Store
-Thumbs.db
+# Virtual machine crash logs
+pm-backend/**/hs_err_pid*
 
-# JetBrains Rider
-.idea/
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/libraries/
-.idea/shelf/
-.idea/vcs.xml
-*.iws
+# Spring Boot
+pm-backend/**/HELP.md
+pm-backend/**/.spring-boot-devtools.properties
 
-# Temporary files
-*.swp
-*.swo
-*.bak
-*.tmp
+# Database
+pm-backend/**/*.db
+pm-backend/**/database/
+pm-backend/**/data/
 
-# Lombok generated files
-**/lombok.config
+# gRPC generated files (optional - keep if needed)
+# pm-backend/**/src/**/generated/
 
-# Application-specific
-.env
-*.key
-*.pem
-*.p12
-*.crt
-*.cert
-*.jks
-*.keystore
+# ================================================
+# FRONTEND (Next.js/React/Node)
+# ================================================
 
-# Docker
-/docker/
-/docker-compose.yml
-/docker-compose.override.yml
+# Dependencies
+pm-frontend/**/node_modules/
+pm-frontend/**/.pnp
+pm-frontend/**/.pnp.js
 
-# Kubernetes
-/k8s/
+# Testing
+pm-frontend/**/coverage
 
-# LocalStack
-.localstack/
+# Next.js
+pm-frontend/**/.next/
+pm-frontend/**/out/
 
-# AWS credentials
-.aws/
+# Production
+pm-frontend/**/build
+pm-frontend/**/dist
+
+# Environment variables
+pm-frontend/**/.env*.local
+pm-frontend/**/.env.local
+pm-frontend/**/.env.development.local
+pm-frontend/**/.env.test.local
+pm-frontend/**/.env.production.local
+
+# Vercel
+pm-frontend/**/.vercel
+
+# TypeScript
+pm-frontend/**/*.tsbuildinfo
+pm-frontend/**/next-env.d.ts
+
+# Debug logs
+pm-frontend/**/npm-debug.log*
+pm-frontend/**/yarn-debug.log*
+pm-frontend/**/yarn-error.log*
+pm-frontend/**/pnpm-debug.log*
+pm-frontend/**/lerna-debug.log*
+
+# ================================================
+# IDE & EDITORS
+# ================================================
+
+# IntelliJ IDEA
+**/.idea/
+**/*.iws
+**/*.iml
+**/*.ipr
+
+# VSCode
+**/.vscode/
+**/*.code-workspace
+
+# Eclipse
+**/.apt_generated
+**/.classpath
+**/.factorypath
+**/.project
+**/.settings
+**/.springBeans
+**/.sts4-cache
+
+# NetBeans
+**/nbproject/private/
+**/nbbuild/
+**/nbdist/
+**/.nb-gradle/
+
+# ================================================
+# OPERATING SYSTEMS
+# ================================================
+
+# macOS
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+**/._*
+
+# Windows
+**/Thumbs.db
+**/Thumbs.db:encryptable
+**/ehthumbs.db
+**/ehthumbs_vista.db
+**/[Dd]esktop.ini
+**/$RECYCLE.BIN/
+
+# Linux
+**/.directory
+**/.Trash-*
+
+# ================================================
+# DOCKER & CONTAINERS
+# ================================================
+
+**/*.log
+**/docker-compose.override.yml
+**/.dockerignore
+
+# ================================================
+# TEMPORARY FILES
+# ================================================
+
+**/*.tmp
+**/*.temp
+**/*.swp
+**/*.swo
+**/*~
+**/.cache/
+
+# ================================================
+# SECURITY & SECRETS
+# ================================================
+
+# Environment variables & secrets
+**/.env
+**/.env.*.local
+**/secrets/
+**/credentials/
+**/*.pem
+**/*.key
+**/*.crt
+**/*.p12
+**/*.jks
+
+# ================================================
+# BUILD ARTIFACTS
+# ================================================
+
+**/dist/
+**/build/
+**/out/
+**/target/
+
+# ================================================
+# KAFKA & ZOOKEEPER
+# ================================================
+
+**/kafka-logs/
+**/zookeeper/
+
+# ================================================
+# DATABASES
+# ================================================
+
+**/*.sql
+**/*.sqlite
+**/*.sqlite3
+**/postgres-data/
+
+# ================================================
+# TESTING & COVERAGE
+# ================================================
+
+**/coverage/
+**/.nyc_output/
+**/test-results/
+**/*.lcov
+
+# ================================================
+# MISC
+# ================================================
+
+**/.antigravityignore
