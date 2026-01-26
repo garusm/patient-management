@@ -2,11 +2,11 @@
 
 **Full-stack microservices application for managing patient records**
 
-[🇵🇱 Polski](#-wersja-polska) | [🇬🇧 English](#-english-version)
+[🇵🇱 Polski](#wersja-polska) | [🇬🇧 English](#english-version)
 
 ---
 
-## 🇵🇱 Wersja Polska
+## Wersja Polska
 
 ### 📖 O Projekcie
 
@@ -246,7 +246,7 @@ Po uruchomieniu API Gateway, dokumentacja Swagger dostępna jest pod:
    - Analytics Service konsumuje i przetwarza
    - Dashboard ze statystykami
 
-
+---
 
 ## English Version
 

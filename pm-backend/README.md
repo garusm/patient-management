@@ -1,141 +1,183 @@
-# Patient Management System
+# Backend - Patient Management System
 
-[PL] [Polski](#polski) | [EN] [English](#english)
+**Microservices architecture with Spring Boot 3.5 + Java 21**
+
+## Tech Stack
+
+- **Java 21** | **Spring Boot 3.5.8** | **Maven Multi-module**
+- **Spring Cloud Gateway** (API Gateway + JWT validation)
+- **Spring Security** (JWT authentication)
+- **PostgreSQL** (production) | **H2** (dev/test)
+- **gRPC** (Patient → Billing sync communication)
+- **Apache Kafka** (Patient → Analytics async events)
+- **OpenAPI/Swagger** (API documentation)
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     API GATEWAY (Port 4004)                     │
+│               • Routing  • JWT Validation  • CORS               │
+└────────────────┬────────────────────────────────────────────────┘
+                 │
+    ┌────────────┼────────────────┬─────────────────────┐
+    │            │                │                     │
+    ▼            ▼                ▼                     ▼
+┌────────┐  ┌──────────┐   ┌───────────┐       ┌─────────────┐
+│  Auth  │  │ Patient  │   │  Billing  │       │ Analytics   │
+│ (4005) │  │  (4000)  │   │  Service  │       │  Service    │
+└────────┘  └─────┬────┘   └─────▲─────┘       └──────▲──────┘
+                  │                │                    │
+                  │    gRPC call   │                    │
+                  └────────────────┘                    │
+                  │                                     │
+                  │     Kafka event: "PatientCreated"  │
+                  └─────────────────────────────────────┘
+```
+
+## Services
+
+| Service | Port | Purpose | Communication |
+|---------|------|---------|---------------|
+| **api-gateway** | 4004 | Entry point, routing, JWT validation | HTTP |
+| **auth-service** | 4005 | User login, JWT generation | REST API |
+| **patient-service** | 4000 | Patient CRUD, business logic | REST + gRPC client + Kafka producer |
+| **billing-service** | - | Billing account management | gRPC server |
+| **analytics-service** | - | Event processing, analytics | Kafka consumer |
+
+## Patient Creation Flow
+
+```
+1. Client → API Gateway: POST /api/patients + JWT
+                ↓
+2. Gateway: Validate JWT ✓
+                ↓
+3. Gateway → Patient Service: Forward request
+                ↓
+4. Patient Service → Billing Service: gRPC CreateBillingAccount()
+                ↓
+5. Billing Service → Patient Service: billingAccountId
+                ↓
+6. Patient Service → Database: Save patient
+                ↓
+7. Patient Service → Kafka: Publish "PatientCreated" event
+                ↓
+8. Analytics Service: Consume event (async)
+                ↓
+9. Patient Service → Client: HTTP 201 Created
+```
+
+## Quick Start
+
+### Prerequisites
+
+```bash
+java --version      # 21+
+mvn --version       # 3.8+
+psql --version      # PostgreSQL 14+
+```
+
+### Database Setup
+
+```sql
+CREATE DATABASE patient_db;
+CREATE DATABASE auth_db;
+CREATE DATABASE billing_db;
+CREATE DATABASE analytics_db;
+```
+
+### Kafka Setup
+
+```bash
+# Start Zookeeper
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+# Start Kafka
+bin/kafka-server-start.sh config/server.properties
+
+# Create topic
+bin/kafka-topics.sh --create --topic patient-events \
+  --bootstrap-server localhost:9092 --partitions 3
+```
+
+### Run Services
+
+```bash
+# Build all
+mvn clean install -DskipTests
+
+# Start each service (separate terminals)
+cd auth-service && mvn spring-boot:run
+cd patient-service && mvn spring-boot:run
+cd billing-service && mvn spring-boot:run
+cd analytics-service && mvn spring-boot:run
+cd api-gateway && mvn spring-boot:run  # Start last
+```
+
+## API Documentation
+
+- **Auth API**: http://localhost:4004/api-docs/auth
+- **Patient API**: http://localhost:4004/api-docs/patients
+
+## Example Requests
+
+```bash
+# Login
+curl -X POST http://localhost:4004/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@example.com","password":"admin123"}'
+
+# Create Patient (with JWT)
+curl -X POST http://localhost:4004/api/patients \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "address": "123 Main St",
+    "dateOfBirth": "1990-01-01"
+  }'
+
+# Get All Patients
+curl http://localhost:4004/api/patients \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+## Configuration
+
+Each service has `application.yml` for configuration:
+
+```yaml
+# Database (patient-service example)
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/patient_db
+    username: pm_user
+    password: your_password
+
+# Kafka (patient-service)
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    
+# JWT (auth-service)
+jwt:
+  secret: your-secret-key
+  expiration: 86400000
+```
+
+## Project Structure
+
+```
+pm-backend/
+├── api-gateway/          # Spring Cloud Gateway
+├── auth-service/         # JWT authentication
+├── patient-service/      # Core CRUD + gRPC client + Kafka producer
+├── billing-service/      # gRPC server
+├── analytics-service/    # Kafka consumer
+└── integration-tests/    # E2E tests
+```
 
 ---
 
-<a name="polski"></a>
-## Wersja Polska
-
-Kompleksowy system zarządzania pacjentami oparty na architekturze mikroserwisowej, wykorzystujący nowoczesne technologie komunikacji i bezpieczeństwa.
-
-### 🚀 Stack Technologiczny
-
-*   **Język:** Java 21
-*   **Framework:** Spring Boot 3.4+
-*   **API Gateway:** Spring Cloud Gateway
-*   **Bezpieczeństwo:** Spring Security, JWT (JSON Web Token)
-*   **Komunikacja Między Serwisami:**
-    *   **gRPC:** Synchronizowana, wysokowydajna komunikacja (np. Patient -> Billing)
-    *   **Apache Kafka:** Asynchroniczne przesyłanie zdarzeń (np. Patient -> Analytics)
-*   **Bazy Danych:** PostgreSQL (Produkcja), H2 (Development/Testy), Spring Data JPA
-*   **Dokumentacja:** OpenAPI / Swagger (SpringDoc)
-*   **Budowanie projektu:** Maven
-
-### 🏗️ Architektura Modułów
-
-System składa się z następujących mikroserwisów:
-
-1.  **`api-gateway` (Port: 4004):** Główny punkt wejściowy systemu. Odpowiada za routing żądań oraz walidację tokenów JWT dla chronionych zasobów.
-2.  **`auth-service` (Port: 4005):** Odpowiada za rejestrację, logowanie użytkowników oraz generowanie i walidację tokenów JWT.
-3.  **`patient-service` (Port: 4000):** Rdzeń systemu zarządzający danymi pacjentów. Przy tworzeniu pacjenta komunikuje się z `billing-service` (via gRPC) oraz publikuje zdarzenia do systemu analitycznego (via Kafka).
-4.  **`billing-service`:** Obsługuje procesy rozliczeniowe. Udostępnia interfejs gRPC do tworzenia kont rozliczeniowych dla nowych pacjentów.
-5.  **`analytics-service`:** Konsumuje zdarzenia z Kafki i przetwarza je w celach analitycznych (np. śledzenie nowych rejestracji).
-
-### 🔄 Action Flow (Diagram Przepływu)
-
-Poniższy diagram przedstawia standardowy proces rejestracji nowego pacjenta w systemie:
-
-```mermaid
-graph TD
-    User([Użytkownik/Klient]) --> |1. Login request| AG[API Gateway]
-    AG -->|2. Forward| AS[Auth Service]
-    AS -->|3. Return JWT| User
-
-    User -->|4. Create Patient + JWT| AG
-    AG -->|5. Validate JWT| AG
-    AG -->|6. Forward Request| PS[Patient Service]
-    
-    PS -->|7. Create Billing Account gRPC| BS[Billing Service]
-    BS -->|8. Billing Response| PS
-    
-    PS -->|9. Publish PatientCreated Event| K[(Kafka)]
-    K -->|10. Consume Event| ANS[Analytics Service]
-    
-    PS -->|11. HTTP 201 Created| User
-```
-
-### 🛠️ Uruchomienie
-
-Projekt jest wielomodułowym projektem Maven. Każdy serwis może być uruchomiony niezależnie jako aplikacja Spring Boot.
-
-Wymagane do działania:
-*   Java 21
-*   Instancja PostgreSQL
-*   Instancja Apache Kafka
-*   Opcjonalnie: Docker do konteneryzacji (jeśli przygotowano Dockerfile)
-
-### 📝 Dokumentacja API
-
-Dokumentacja Swagger/OpenAPI jest dostępna pod adresami (po uruchomieniu bramy):
-*   Auth Service: `http://localhost:4004/api-docs/auth`
-*   Patient Service: `http://localhost:4004/api-docs/patients`
-
----
-
-<a name="english"></a>
-## English Version
-
-A comprehensive patient management system based on microservices architecture, utilizing modern communication and security technologies.
-
-### 🚀 Tech Stack
-
-*   **Language:** Java 21
-*   **Framework:** Spring Boot 3.4+
-*   **API Gateway:** Spring Cloud Gateway
-*   **Security:** Spring Security, JWT (JSON Web Token)
-*   **Inter-service Communication:**
-    *   **gRPC:** Synchronous, high-performance communication (e.g., Patient -> Billing)
-    *   **Apache Kafka:** Asynchronous event streaming (e.g., Patient -> Analytics)
-*   **Databases:** PostgreSQL (Production), H2 (Development/Testing), Spring Data JPA
-*   **Documentation:** OpenAPI / Swagger (SpringDoc)
-*   **Build Tool:** Maven
-
-### 🏗️ Module Architecture
-
-The system consists of the following microservices:
-
-1.  **`api-gateway` (Port: 4004):** The main entry point of the system. Responsible for request routing and JWT token validation for protected resources.
-2.  **`auth-service` (Port: 4005):** Responsible for user registration, login, and generating/validating JWT tokens.
-3.  **`patient-service` (Port: 4000):** The core of the system managing patient data. When creating a patient, it communicates with `billing-service` (via gRPC) and publishes events to the analytics system (via Kafka).
-4.  **`billing-service`:** Handles billing processes. Provides a gRPC interface to create billing accounts for new patients.
-5.  **`analytics-service`:** Consumes events from Kafka and processes them for analytical purposes (e.g., tracking new registrations).
-
-### 🔄 Action Flow
-
-The following diagram illustrates the standard process of registering a new patient in the system:
-
-```mermaid
-graph TD
-    User([User/Client]) --> |1. Login request| AG[API Gateway]
-    AG -->|2. Forward| AS[Auth Service]
-    AS -->|3. Return JWT| User
-
-    User -->|4. Create Patient + JWT| AG
-    AG -->|5. Validate JWT| AG
-    AG -->|6. Forward Request| PS[Patient Service]
-    
-    PS -->|7. Create Billing Account gRPC| BS[Billing Service]
-    BS -->|8. Billing Response| PS
-    
-    PS -->|9. Publish PatientCreated Event| K[(Kafka)]
-    K -->|10. Consume Event| ANS[Analytics Service]
-    
-    PS -->|11. HTTP 201 Created| User
-```
-
-### 🛠️ Getting Started
-
-The project is a multi-module Maven project. Each service can be run independently as a Spring Boot application.
-
-Requirements:
-*   Java 21
-*   PostgreSQL instance
-*   Apache Kafka instance
-*   Optional: Docker for containerization (if Dockerfile is provided)
-
-### 📝 API Documentation
-
-Swagger/OpenAPI documentation is available at the following addresses (after starting the gateway):
-*   Auth Service: `http://localhost:4004/api-docs/auth`
-*   Patient Service: `http://localhost:4004/api-docs/patients`
+**See root README.md for complete project documentation**
