@@ -1,6 +1,13 @@
 server:
   port: 4004 # Gateway listens on port 4004
 
+# CORS Configuration
+# Allows frontend applications to communicate with the API Gateway
+cors:
+  allowed-origins: http://localhost:3000
+  # For production, use:
+  # allowed-origins: https://your-production-domain.com,https://www.your-production-domain.com
+
 ## DEBUG mode
 #logging:
 #  level:
