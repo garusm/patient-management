@@ -69,7 +69,33 @@
 
 ## Quick Start
 
-### Prerequisites
+### 🐳 Option 1: Docker (Recommended)
+
+**Fastest way to run the entire system!**
+
+```bash
+# Start all services with one command
+docker-compose up -d
+
+# Check status
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+```
+
+**That's it!** All services, databases, and Kafka will be running.
+
+👉 **See [DOCKER_README.md](DOCKER_README.md) for detailed Docker instructions**
+
+---
+
+### ⚙️ Option 2: Manual Setup
+
+#### Prerequisites
 
 ```bash
 java --version      # 21+
@@ -77,7 +103,7 @@ mvn --version       # 3.8+
 psql --version      # PostgreSQL 14+
 ```
 
-### Database Setup
+#### Database Setup
 
 ```sql
 CREATE DATABASE patient_db;
@@ -86,7 +112,7 @@ CREATE DATABASE billing_db;
 CREATE DATABASE analytics_db;
 ```
 
-### Kafka Setup
+#### Kafka Setup
 
 ```bash
 # Start Zookeeper
@@ -100,7 +126,7 @@ bin/kafka-topics.sh --create --topic patient-events \
   --bootstrap-server localhost:9092 --partitions 3
 ```
 
-### Run Services
+#### Run Services
 
 ```bash
 # Build all

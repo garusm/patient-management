@@ -12,6 +12,9 @@ RUN mvn clean package
 
 FROM eclipse-temurin:21-jdk AS runner
 
+# Install netcat for healthcheck
+RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY --from=builder ./app/target/analytics-service-0.0.1-SNAPSHOT.jar ./app.jar
